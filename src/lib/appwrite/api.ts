@@ -1,4 +1,4 @@
-import { ID } from "appwrite";
+import { ID, Query } from "appwrite";
 
 import { INewUser } from "@/types";
 import { account, avatars, databases, appwriteConfig } from "./config";
@@ -6,10 +6,10 @@ import { account, avatars, databases, appwriteConfig } from "./config";
 export async function createUserAccount(user: INewUser) {
   try {
     const newAccount = await account.create(
-            ID.unique(),
-            user.email,
-            user.password,
-            user.name
+      ID.unique(),
+      user.email,
+      user.password,
+      user.name
     );
 
     if (!newAccount) throw Error;
@@ -22,7 +22,7 @@ export async function createUserAccount(user: INewUser) {
       email: newAccount.email,
       username: user.username,
       imageUrl: avatarUrl,
-    })
+    });
 
     return newUser;
   } catch (error) {
@@ -32,20 +32,50 @@ export async function createUserAccount(user: INewUser) {
 }
 
 export async function saveUserToDB(user: {
-  accountId: string,
-  name: string,
-  email: string,
-  imageUrl: URL,
-  username?: string,
+  accountId: string;
+  name: string;
+  email: string;
+  imageUrl: URL;
+  username?: string;
 }) {
   try {
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
-      user,
+      user
+    );
+    return newUser;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function signInAccount(user: { email: string; password: string }) {
+  try {
+    const session = await account.createEmailSession(user.email, user.password);
+    return session;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getCurrentUser() {
+  try {
+    const currentAccount = await account.get();
+    if(!currentAccount) throw Error;
+    
+    const currentUser = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [
+        Query.equal('accountId', currentAccount.$id)
+      ]
     )
-    return newUser
+    
+    if(!currentUser) throw Error;
+
+    return currentUser.documents[0];
   } catch (error) {
     console.error(error);
   }
