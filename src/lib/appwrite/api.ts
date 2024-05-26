@@ -92,7 +92,7 @@ export async function createPost(post: INewPost) {
   try {
     // upload image to storage
     const uploadedFile = await uploadFile(post.file[0]);
-    
+
     if (!uploadedFile) throw Error;
 
     // get file url
@@ -187,6 +187,61 @@ export async function getRecentPosts() {
     if (!posts) throw Error;
 
     return posts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function likePost(postId: string, likesArray: string[]) {
+  try {
+    const UpdatedPost = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        likes: likesArray,
+      }
+    );
+
+    if (!UpdatedPost) throw Error;
+
+    return UpdatedPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function savePost(postId: string, userId: string) {
+  try {
+    const UpdatedPost = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      ID.unique(),
+      {
+        user: userId,
+        post: postId,
+      }
+    );
+
+    if (!UpdatedPost) throw Error;
+
+    return UpdatedPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteSavedPost(savedRecordId: string) {
+  try {
+    const statusCode = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      savedRecordId
+    );
+
+    if (!statusCode) throw Error;
+
+    return { status: "ok" };
   } catch (error) {
     console.error(error);
   }
