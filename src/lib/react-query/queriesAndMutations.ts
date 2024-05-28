@@ -8,8 +8,10 @@ import {
 import {
   createPost,
   createUserAccount,
+  deleteSavedPost,
   getRecentPosts,
   likePost,
+  savePost,
   signInAccount,
   signOutAccount,
 } from "../appwrite/api";
@@ -82,21 +84,18 @@ export const useLikePost = () => {
   });
 };
 
-export const useLikePost = () => {
+export const useSavePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
       postId,
-      likesArray,
+      userId,
     }: {
       postId: string;
-      likesArray: string[];
-    }) => likePost(postId, likesArray),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id],
-      });
+      userId: string;
+    }) => savePost(postId, userId),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
       });
@@ -110,4 +109,21 @@ export const useLikePost = () => {
   });
 };
 
-https://youtu.be/_W3R2VwRyF4?t=14920
+export const useDeleteSavedPost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (savedRecordId: string) => deleteSavedPost(savedRecordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+      });
+    },
+  });
+};
