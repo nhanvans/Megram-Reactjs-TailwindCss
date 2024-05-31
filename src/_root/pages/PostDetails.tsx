@@ -11,7 +11,7 @@ const PostDetails = () => {
   const { data: post, isPending } = useGetPostById(id || "");
   const { user } = useUserContext();
 
-  const handleDeletePost = (e) => {};
+  const handleDeletePost = () => {};
 
   return (
     <div className="post_details-container">
