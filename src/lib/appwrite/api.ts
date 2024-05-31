@@ -276,14 +276,14 @@ export async function updatePost(post: IUpdatePost) {
       // upload image to storage
       const uploadedFile = await uploadFile(post.file[0]);
 
-      if (!uploadedFile) throw Error('not file');
+      if (!uploadedFile) throw Error("not file");
       // get file url
 
       const fileUrl = await getFilePreview(uploadedFile.$id);
 
       if (!fileUrl) {
         deleteFile(uploadedFile.$id);
-        throw Error('not get');
+        throw Error("not get");
       }
 
       image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
@@ -309,7 +309,7 @@ export async function updatePost(post: IUpdatePost) {
 
     if (updatedPost) {
       await deleteFile(post.imageId);
-      throw Error('deleted old image');
+      throw Error("deleted old image");
     }
 
     return updatedPost;
@@ -318,7 +318,7 @@ export async function updatePost(post: IUpdatePost) {
   }
 }
 
-export async function deletePost(postId: string, imageId:string) {
+export async function deletePost(postId: string, imageId: string) {
   if (!postId || !imageId) throw Error;
   try {
     const statusCode = await databases.deleteDocument(
@@ -332,6 +332,44 @@ export async function deletePost(postId: string, imageId:string) {
     if (!statusCode) throw Error;
 
     return { status: "ok" };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
+  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+
+  if (pageParam) {
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      queries
+    );
+
+    if (!posts) throw Error("get infinite error !!!");
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function searchPosts(searchTerm: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.search('caption', searchTerm)]
+    );
+
+    if (!posts) throw Error("search error !!!");
+
+    return posts;
   } catch (error) {
     console.error(error);
   }
