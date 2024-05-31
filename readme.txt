@@ -3,6 +3,10 @@ React JS, Appwrite, Tailwind CSS, React Query
 
 # Source: 
 https://www.youtube.com/watch?v=_W3R2VwRyF4
+# web:
+https://www.jsmastery.pro/blog
+# github:
+https://github.com/adrianhajdin/social_media_app/
 
 # React + TypeScript + Vite
 
