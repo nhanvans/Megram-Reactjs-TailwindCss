@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { SignupValidation } from "@/lib/validation";
 import * as z from "zod";
 import Loader from "@/components/shared/Loader";
-import { createUserAccount } from "@/lib/appwrite/api";
 import {
   useCreateUserAccount,
   useSignInAccount,
