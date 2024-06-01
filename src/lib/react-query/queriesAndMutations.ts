@@ -23,6 +23,7 @@ import {
   updatePost,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
+import { Models } from "appwrite";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -176,7 +177,7 @@ export const useGetPosts = () => {
   return useInfiniteQuery({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
     queryFn: getInfinitePosts,
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: (lastPage: Models.DocumentList<Models.Document> | undefined) => {
       console.log(lastPage);
       
       if (lastPage && lastPage?.documents.length === 0) {
