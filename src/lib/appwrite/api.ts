@@ -309,7 +309,7 @@ export async function updatePost(post: IUpdatePost) {
 
     if (updatedPost) {
       await deleteFile(post.imageId);
-      throw Error("deleted old image");
+      // throw Error("deleted old image");
     }
 
     return updatedPost;
