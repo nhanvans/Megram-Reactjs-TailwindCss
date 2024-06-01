@@ -1,4 +1,3 @@
-import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -31,7 +30,7 @@ const SignupForm = () => {
   const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
     useCreateUserAccount();
 
-  const { mutateAsync: signInAccount, isPending: isSignIn } =
+  const { mutateAsync: signInAccount, isPending: isSigningInUser } =
     useSignInAccount();
 
   // 1. Define your form.
@@ -61,14 +60,14 @@ const SignupForm = () => {
     if (!session) {
       return toast({ title: "Sign Up failed. Please try again." });
     }
-    
+
     const isLoggedIn = await checkAuthUser();
 
     if (isLoggedIn) {
       form.reset();
 
-      navigate('/')
-    }else{
+      navigate("/");
+    } else {
       return toast({ title: "Sign Up failed. Please try again." });
     }
   }
@@ -142,7 +141,7 @@ const SignupForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isCreatingAccount ? (
+            {isCreatingAccount || isSigningInUser || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading
               </div>
