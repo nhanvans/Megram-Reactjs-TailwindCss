@@ -175,8 +175,8 @@ export const useDeletePost = () => {
 export const useGetPosts = () => {
   return useInfiniteQuery({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-    queryFn: getInfinitePosts as any,
-    getNextPageParam: (lastPage: any) => {
+    queryFn: getInfinitePosts,
+    getNextPageParam: (lastPage) => {
       console.log(lastPage);
       
       if (lastPage && lastPage?.documents.length === 0) {
